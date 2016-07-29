@@ -1,0 +1,26 @@
+---
+
+- name: create dotnetdev.list file
+  file: path=/etc/apt/sources.list.d/dotnetdev.list state=touch owner=root group=root mode=0755
+
+- name: set apt-get feed Ubuntu Xenial
+  lineinfile: dest=/etc/apt/sources.list.d/dotnetdev.list line="deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ xenial main"
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16" 
+
+- name: set apt-get feed Ubuntu Trusty
+  lineinfile: dest=/etc/apt/sources.list.d/dotnetdev.list line="deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ trusty main"
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "14"
+
+- name: apt key add
+  apt_key: keyserver=apt-mo.trafficmanager.net id=417A0893
+
+- name: Updating apt cache
+  apt:
+    update_cache: yes
+
+
+
+
+- name: Install dotnet core SDK
+  apt: name=dotnet-dev-1.0.0-preview2-003121 state=present cache_valid_time=86400
+
